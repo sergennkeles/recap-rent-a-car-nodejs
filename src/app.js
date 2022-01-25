@@ -1,6 +1,6 @@
 const express = require("express");
 const helmet = require("helmet");
-const config = require("./config/index");
+const config = require("./config");
 
 config();
 
