@@ -6,7 +6,7 @@ db.once("open", () => {
 });
 
 const connectDb = async () => {
-  await mongoose.connect(`mongodb://127.0.0.1:27017/recap`, {
+  await mongoose.connect(`mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
