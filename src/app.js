@@ -5,7 +5,7 @@ const loaders = require("./loaders");
 const { BrandsRoutes } = require("./api-routes");
 
 config();
-//loaders();
+loaders();
 
 const app = express();
 app.use(express.json());
