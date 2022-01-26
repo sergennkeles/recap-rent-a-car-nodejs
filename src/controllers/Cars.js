@@ -51,10 +51,32 @@ const getById = (req, res) => {
     });
 };
 
+const getByBrandId = (req, res) => {
+  get({ brandId: req?.params?.brandId })
+    .then((response) => {
+      res.status(httpStatus.OK).send(response);
+    })
+    .catch((e) => {
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
+    });
+};
+
+const getByColorId = (req, res) => {
+  get({ colorId: req?.params?.colorId })
+    .then((response) => {
+      res.status(httpStatus.OK).send(response);
+    })
+    .catch((e) => {
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
+    });
+};
+
 module.exports = {
   create,
   list,
   update,
   deleted,
   getById,
+  getByBrandId,
+  getByColorId,
 };

@@ -1,7 +1,16 @@
 const car = require("../models/Car");
 
-const get = () => {
-  return car.find({});
+const get = (where) => {
+  return car.find(where || {}).populate([
+    {
+      path: "brandId",
+      select: "brandName",
+    },
+    {
+      path: "colorId",
+      select: "colorName",
+    },
+  ]);
 };
 
 const add = (data) => {
@@ -18,7 +27,16 @@ const remove = (id) => {
 };
 
 const findById = (id) => {
-  return car.findById(id);
+  return car.findById(id).populate([
+    {
+      path: "brandId",
+      select: "brandName",
+    },
+    {
+      path: "colorId",
+      select: "colorName",
+    },
+  ]);
 };
 
 module.exports = {
