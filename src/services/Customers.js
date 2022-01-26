@@ -1,7 +1,10 @@
 const customer = require("../models/Customer");
 
-const get = () => {
-  return customer.find({});
+const get = (where) => {
+  return customer.find(where || {}).populate({
+    path: "userId",
+    select: "firstName, lastName, email",
+  });
 };
 
 const add = (data) => {
@@ -18,7 +21,10 @@ const remove = (id) => {
 };
 
 const findById = (id) => {
-  return customer.findById(id);
+  return customer.findById(id).populate({
+    path: "userId",
+    select: "firstName, lastName, email",
+  });
 };
 
 module.exports = {

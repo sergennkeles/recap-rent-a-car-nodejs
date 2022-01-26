@@ -1,7 +1,32 @@
 const rental = require("../models/Rental");
 
-const get = () => {
-  return rental.find({});
+const get = (where) => {
+  return rental.find(where || {}).populate([
+    {
+      path: "carId",
+      select: "modelYear",
+      populate: [
+        {
+          path: "brandId",
+          select: "brandName",
+        },
+        {
+          path: "colorId",
+          select: "colorName",
+        },
+      ],
+    },
+    {
+      path: "customerId",
+      select: "companyName",
+      populate: [
+        {
+          path: "userId",
+          select: "firstName lastName",
+        },
+      ],
+    },
+  ]);
 };
 
 const add = (data) => {
@@ -18,7 +43,32 @@ const remove = (id) => {
 };
 
 const findById = (id) => {
-  return rental.findById(id);
+  return rental.findById(id).populate([
+    {
+      path: "carId",
+      select: "modelYear",
+      populate: [
+        {
+          path: "brandId",
+          select: "brandName",
+        },
+        {
+          path: "colorId",
+          select: "colorName",
+        },
+      ],
+    },
+    {
+      path: "customerId",
+      select: "companyName",
+      populate: [
+        {
+          path: "userId",
+          select: "firstName lastName",
+        },
+      ],
+    },
+  ]);
 };
 
 module.exports = {
