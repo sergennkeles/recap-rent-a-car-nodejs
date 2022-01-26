@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const CustomerSchema = new mongoose.Schema(
   {
-    componyName: String,
+    companyName: String,
     userId: {
       type: mongoose.Types.ObjectId,
       ref: "user",

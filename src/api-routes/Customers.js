@@ -1,5 +1,5 @@
 const express = require("express");
-const { create, list, update, deleted, getById } = require("../controllers/Brands");
+const { create, list, update, deleted, getById } = require("../controllers/Customers");
 const router = express.Router();
 
 router.route("/").post(create);

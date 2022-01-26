@@ -1,4 +1,4 @@
-const { add, get, modify, remove, findById } = require("../services/Brands");
+const { add, get, modify, remove, findById } = require("../services/Cars");
 const httpStatus = require("http-status");
 
 const create = (req, res) => {
