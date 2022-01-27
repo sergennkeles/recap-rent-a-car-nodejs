@@ -1,5 +1,6 @@
 const { add, get, modify, remove, findById } = require("../services/Users");
 const httpStatus = require("http-status");
+const apiError = require("../errors/ApiError");
 
 const create = (req, res) => {
   add(req.body)
@@ -11,10 +12,14 @@ const create = (req, res) => {
     });
 };
 
-const update = (req, res) => {
+const update = (req, res, next) => {
   modify(req.params?.id, req.body)
     .then((response) => {
-      res.status(httpStatus.OK).send(response);
+      if (!response) {
+        return next(new apiError("ID bilgisi yanlış.", httpStatus.NOT_FOUND));
+      } else {
+        res.status(httpStatus.OK).send(response);
+      }
     })
     .catch((e) => {
       res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
@@ -31,20 +36,28 @@ const list = (req, res) => {
     });
 };
 
-const deleted = (req, res) => {
+const deleted = (req, res, next) => {
   remove(req.params?.id)
-    .then(() => {
-      res.status(httpStatus.OK).send({ message: "Kayıt başarılı bir şekilde silinmiştir." });
+    .then((response) => {
+      if (!response) {
+        return next(new apiError("Böyle bir kayıt yok.", httpStatus.NOT_FOUND));
+      } else {
+        res.status(httpStatus.OK).send({ message: "Kayıt başarılı bir şekilde silinmiştir." });
+      }
     })
     .catch((e) => {
       res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
     });
 };
 
-const getById = (req, res) => {
+const getById = (req, res, next) => {
   findById(req.params?.id)
     .then((response) => {
-      res.status(httpStatus.OK).send(response);
+      if (!response) {
+        return next(new apiError("Böyle bir kayıt yok.", httpStatus.NOT_FOUND));
+      } else {
+        res.status(httpStatus.OK).send(response);
+      }
     })
     .catch((e) => {
       res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);

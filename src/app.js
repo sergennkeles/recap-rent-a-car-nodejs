@@ -2,6 +2,7 @@ const express = require("express");
 const helmet = require("helmet");
 const config = require("./config");
 const loaders = require("./loaders");
+const errorHandler = require("./middlewares/ErrorHandler");
 const { BrandsRoutes, ColorsRoutes, UsersRoutes, CarsRoutes, RentalsRoutes, CustomersRoutes } = require("./api-routes");
 
 config();
@@ -20,4 +21,11 @@ app.listen(process.env.APP_PORT, () => {
   app.use("/cars", CarsRoutes);
   app.use("/rentals", RentalsRoutes);
   app.use("/customers", CustomersRoutes);
+
+  app.use((req, res, next) => {
+    const error = new Error("Aradığınız sayfa bulunmamaktadır.");
+    error.status = 404;
+    next(error);
+  });
+  app.use(errorHandler);
 });
