@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const logger = require("../scripts/loggers/Rentals");
 
 const RentalSchema = new mongoose.Schema(
   {
@@ -18,5 +19,12 @@ const RentalSchema = new mongoose.Schema(
     versionKey: false,
   }
 );
+
+RentalSchema.post("save", (doc) => {
+  logger.log({
+    level: "info",
+    message: doc,
+  });
+});
 
 module.exports = mongoose.model("rental", RentalSchema);
