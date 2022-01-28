@@ -21,10 +21,15 @@ const findById = (id) => {
   return user.findById(id);
 };
 
+const userLogin = (loginData) => {
+  return user.findOne(loginData);
+};
+
 module.exports = {
   add,
   get,
   modify,
   remove,
   findById,
+  userLogin,
 };

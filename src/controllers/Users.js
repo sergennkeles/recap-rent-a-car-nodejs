@@ -1,8 +1,10 @@
-const { add, get, modify, remove, findById } = require("../services/Users");
+const { add, get, modify, remove, findById, userLogin } = require("../services/Users");
 const httpStatus = require("http-status");
 const apiError = require("../errors/ApiError");
+const { passwordToHash, generateAccessToken, generateRefreshToken } = require("../scripts/utils/Helper");
 
 const create = (req, res) => {
+  req.body.password = passwordToHash(req.body.password); // password hashing
   add(req.body)
     .then((response) => {
       res.status(httpStatus.OK).send(response);
@@ -64,10 +66,32 @@ const getById = (req, res, next) => {
     });
 };
 
+const login = (req, res, next) => {
+  req.body.password = passwordToHash(req.body.password);
+  userLogin(req.body)
+    .then((user) => {
+      if (!user) return next(new apiError("Böyle bir kullanıcı yok.", 404));
+      user = {
+        ...user.toObject(), // toObject ile objeye çevirdik. Aslında user bir obje fakat mongoose üzerinden oluşturduğumuz modelin diğer tüm özelliklerini de dahil ederek gönderiyor.
+        // bunun önüne geçmek için toObject'i kullandık.
+        tokens: {
+          access_token: generateAccessToken(user),
+          refresh_token: generateRefreshToken(user),
+        },
+      };
+      delete user.password; // password'ün görüntülenmesine gerek olmadığı için delete ettik.
+      res.status(httpStatus.OK).send(user);
+    })
+    .catch((e) => {
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
+    });
+};
+
 module.exports = {
   create,
   list,
   update,
   deleted,
   getById,
+  login,
 };
