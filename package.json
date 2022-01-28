@@ -9,11 +9,13 @@
   "author": "skeles",
   "license": "ISC",
   "dependencies": {
+    "crypto-js": "^4.1.1",
     "dotenv": "^14.3.0",
     "express": "^4.17.2",
     "helmet": "^5.0.2",
     "http-status": "^1.5.0",
     "joi": "^17.5.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.8",
     "winston": "^3.4.0"
   },
