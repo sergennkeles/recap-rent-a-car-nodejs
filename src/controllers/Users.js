@@ -15,7 +15,7 @@ const create = (req, res) => {
 };
 
 const update = (req, res, next) => {
-  modify(req.params?.id, req.body)
+  modify(req.user?._id, req.body)
     .then((response) => {
       if (!response) {
         return next(new apiError("ID bilgisi yanlış.", httpStatus.NOT_FOUND));

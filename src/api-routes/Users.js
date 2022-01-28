@@ -8,7 +8,7 @@ const router = express.Router();
 router.route("/").post(validate(schema.createValidation), create);
 router.route("/login").post(authenticateToken, validate(schema.loginValidation), login);
 router.route("/").get(authenticateToken, list);
-router.route("/:id").patch(authenticateToken, validate(schema.updateValidation), update);
+router.route("/").patch(authenticateToken, validate(schema.updateValidation), update);
 router.route("/:id").delete(authenticateToken, deleted);
 router.route("/:id").get(authenticateToken, getById);
 
