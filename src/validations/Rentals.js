@@ -4,7 +4,7 @@ const createValidation = joi.object({
   carId: joi.string().required().min(8),
   customerId: joi.string().required().min(8),
   rentDate: joi.date().required(),
-  returnDate: joi.date().required(),
+  returnDate: joi.date()
 });
 
 const updateValidation = joi.object({
