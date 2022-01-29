@@ -26,7 +26,23 @@ const create = (req, res, next) => {
 };
 
 const update = (req, res, next) => {
-  
+  findOne({ email: req.body.email })
+    .then((emailResponse) => {
+      if (emailResponse) {
+        return next(new apiError("Bu mail adresi ile kayıtlı kullanıcı var", httpStatus.BAD_REQUEST));
+      } else {
+        modify({ _id: req.user?._id }, req.body)
+          .then((response) => {
+            res.status(httpStatus.OK).send(response);
+          })
+          .catch((e) => {
+            res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
+          });
+      }
+    })
+    .catch((e) => {
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
+    });
 };
 
 const list = (req, res) => {
