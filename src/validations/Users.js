@@ -20,8 +20,14 @@ const loginValidation = joi.object({
   email: joi.string().email().required().min(8),
   password: joi.string().required().min(8),
 });
+
+const passwordValidation = joi.object({
+  email: joi.string().email().required().min(8),
+});
+
 module.exports = {
   createValidation,
   updateValidation,
   loginValidation,
+  passwordValidation,
 };

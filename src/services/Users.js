@@ -9,16 +9,16 @@ const add = (data) => {
   return userModel.save();
 };
 
-const modify = (id, data) => {
-  return user.findByIdAndUpdate(id, data, { new: true });
+const modify = (where, data) => {
+  return user.findOneAndUpdate(where, data, { new: true });
 };
 
 const remove = (id) => {
   return user.findByIdAndRemove(id);
 };
 
-const findById = (id) => {
-  return user.findById(id);
+const findOne = (where) => {
+  return user.findOne(where);
 };
 
 const userLogin = (loginData) => {
@@ -30,6 +30,6 @@ module.exports = {
   get,
   modify,
   remove,
-  findById,
+  findOne,
   userLogin,
 };

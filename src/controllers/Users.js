@@ -1,13 +1,24 @@
-const { add, get, modify, remove, findById, userLogin } = require("../services/Users");
+const { add, get, modify, remove, findOne, userLogin } = require("../services/Users");
 const httpStatus = require("http-status");
 const apiError = require("../errors/ApiError");
 const { passwordToHash, generateAccessToken, generateRefreshToken } = require("../scripts/utils/Helper");
 
-const create = (req, res) => {
-  req.body.password = passwordToHash(req.body.password); // password hashing
-  add(req.body)
-    .then((response) => {
-      res.status(httpStatus.OK).send(response);
+const create = (req, res, next) => {
+  findOne({ email: req.body.email })
+    .then((emailResponse) => {
+      if (emailResponse) {
+        return next(new apiError("Bu mail adresi ile kayıtlı kullanıcı var", httpStatus.BAD_REQUEST));
+      } else {
+        req.body.password = passwordToHash(req.body.password); // password hashing
+        add(req.body)
+          .then((response) => {
+            console.log(response);
+            res.status(httpStatus.OK).send(response);
+          })
+          .catch((e) => {
+            res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
+          });
+      }
     })
     .catch((e) => {
       res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
@@ -15,17 +26,7 @@ const create = (req, res) => {
 };
 
 const update = (req, res, next) => {
-  modify(req.user?._id, req.body)
-    .then((response) => {
-      if (!response) {
-        return next(new apiError("ID bilgisi yanlış.", httpStatus.NOT_FOUND));
-      } else {
-        res.status(httpStatus.OK).send(response);
-      }
-    })
-    .catch((e) => {
-      res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
-    });
+  
 };
 
 const list = (req, res) => {
@@ -53,7 +54,7 @@ const deleted = (req, res, next) => {
 };
 
 const getById = (req, res, next) => {
-  findById(req.params?.id)
+  findOne({ _id: req.params?.id })
     .then((response) => {
       if (!response) {
         return next(new apiError("Böyle bir kayıt yok.", httpStatus.NOT_FOUND));
@@ -87,6 +88,19 @@ const login = (req, res, next) => {
     });
 };
 
+const resetPassword = (req, res, next) => {
+  const newPassword = `usr-${new Date().getTime()}`;
+  console.log(newPassword);
+  modify({ email: req.body.email }, { password: passwordToHash(newPassword) })
+    .then((response) => {
+      if (!response) return next(new apiError("Böyle bir kullanıcı yok."), httpStatus.NOT_FOUND);
+      res.status(httpStatus.OK).send(response);
+    })
+    .catch((e) => {
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
+    });
+};
+
 module.exports = {
   create,
   list,
@@ -94,4 +108,5 @@ module.exports = {
   deleted,
   getById,
   login,
+  resetPassword,
 };
