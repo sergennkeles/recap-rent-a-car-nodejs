@@ -3,10 +3,12 @@ const helmet = require("helmet");
 const config = require("./config");
 const loaders = require("./loaders");
 const errorHandler = require("./middlewares/ErrorHandler");
+const events = require("./scripts/events");
 const { BrandsRoutes, ColorsRoutes, UsersRoutes, CarsRoutes, RentalsRoutes, CustomersRoutes } = require("./api-routes");
 
 config();
 loaders();
+events();
 
 const app = express();
 app.use(express.json());

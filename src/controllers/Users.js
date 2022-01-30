@@ -1,6 +1,7 @@
 const { add, get, modify, remove, findOne, userLogin } = require("../services/Users");
 const httpStatus = require("http-status");
 const apiError = require("../errors/ApiError");
+const eventEmitter = require("../scripts/events/EventEmitter");
 const { passwordToHash, generateAccessToken, generateRefreshToken } = require("../scripts/utils/Helper");
 
 const create = (req, res, next) => {
@@ -110,6 +111,13 @@ const resetPassword = (req, res, next) => {
   modify({ email: req.body.email }, { password: passwordToHash(newPassword) })
     .then((response) => {
       if (!response) return next(new apiError("Böyle bir kullanıcı yok."), httpStatus.NOT_FOUND);
+      eventEmitter.emit("send", {
+        to: response.email,
+        subject: "Parola sıfırlama", 
+        html: `Talebiniz üzerine parola sıfırlama işleminiz gerçekleşmiştir.
+        <br/> Sisteme giriş yaptıktan sonra parolanızı değiştirmeyi unutmayın 
+        <br/> Yeni parolanız: <b>${newPassword}</b>`,
+      });
       res.status(httpStatus.OK).send(response);
     })
     .catch((e) => {
