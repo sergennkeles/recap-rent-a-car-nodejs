@@ -1,10 +1,9 @@
 const carImage = require("../models/CarImage");
 
-const get = () => {
-  return carImage.find({}).populate([
+const get = (where) => {
+  return carImage.find(where || {}).populate([
     {
       path: "carId",
-      select: "modelYear",
       populate: [
         {
           path: "brandId",
