@@ -113,12 +113,23 @@ const resetPassword = (req, res, next) => {
       if (!response) return next(new apiError("Böyle bir kullanıcı yok."), httpStatus.NOT_FOUND);
       eventEmitter.emit("send", {
         to: response.email,
-        subject: "Parola sıfırlama", 
+        subject: "Parola sıfırlama",
         html: `Talebiniz üzerine parola sıfırlama işleminiz gerçekleşmiştir.
         <br/> Sisteme giriş yaptıktan sonra parolanızı değiştirmeyi unutmayın 
         <br/> Yeni parolanız: <b>${newPassword}</b>`,
       });
       res.status(httpStatus.OK).send(response);
+    })
+    .catch((e) => {
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
+    });
+};
+
+const changePassword = (req, res) => {
+  req.body.password = passwordToHash(req.body.password);
+  modify({ _id: req.user?._id }, req.body)
+    .then((response) => {
+      res.status(httpStatus.OK).send({message:"Parolanız başarıyla değiştirilmiştir."});
     })
     .catch((e) => {
       res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
@@ -133,4 +144,5 @@ module.exports = {
   getById,
   login,
   resetPassword,
+  changePassword,
 };
