@@ -1,48 +1,36 @@
 const car = require("../models/Car");
+const BaseService = require("./BaseService");
 
-const get = (where) => {
-  return car.find(where || {}).populate([
-    {
-      path: "brandId",
-      select: "brandName",
-    },
-    {
-      path: "colorId",
-      select: "colorName",
-    },
-  ]);
-};
+class CarService extends BaseService {
+  constructor() {
+    super(car);
+  }
 
-const add = (data) => {
-  const carModel = new car(data); // yeni bir model örneği oluştur ve body'den gelen dataya göre doldur
-  return carModel.save();
-};
+  getAll(where) {
+    return car.find(where || {}).populate([
+      {
+        path: "brandId",
+        select: "brandName",
+      },
+      {
+        path: "colorId",
+        select: "colorName",
+      },
+    ]);
+  }
 
-const modify = (id, data) => {
-  return car.findByIdAndUpdate(id, data, { new: true });
-};
+  findById(id) {
+    return car.findById(id).populate([
+      {
+        path: "brandId",
+        select: "brandName",
+      },
+      {
+        path: "colorId",
+        select: "colorName",
+      },
+    ]);
+  }
+}
 
-const remove = (id) => {
-  return car.findByIdAndRemove(id);
-};
-
-const findById = (id) => {
-  return car.findById(id).populate([
-    {
-      path: "brandId",
-      select: "brandName",
-    },
-    {
-      path: "colorId",
-      select: "colorName",
-    },
-  ]);
-};
-
-module.exports = {
-  add,
-  get,
-  modify,
-  remove,
-  findById,
-};
+module.exports = new CarService();

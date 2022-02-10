@@ -1,17 +1,19 @@
-const { add, get, modify, remove, findOne, userLogin } = require("../services/Users");
+const userService = require("../services/Users");
 const httpStatus = require("http-status");
 const apiError = require("../errors/ApiError");
 const eventEmitter = require("../scripts/events/EventEmitter");
 const { passwordToHash, generateAccessToken, generateRefreshToken } = require("../scripts/utils/Helper");
 
 const create = (req, res, next) => {
-  findOne({ email: req.body.email })
+  userService
+    .findOne({ email: req.body.email })
     .then((emailResponse) => {
       if (emailResponse) {
         return next(new apiError("Bu mail adresi ile kayıtlı kullanıcı var", httpStatus.BAD_REQUEST));
       } else {
         req.body.password = passwordToHash(req.body.password); // password hashing
-        add(req.body)
+        userService
+          .add(req.body)
           .then((response) => {
             console.log(response);
             res.status(httpStatus.OK).send(response);
@@ -27,12 +29,14 @@ const create = (req, res, next) => {
 };
 
 const update = (req, res, next) => {
-  findOne({ email: req.body.email })
+  userService
+    .findOne({ email: req.body.email })
     .then((emailResponse) => {
       if (emailResponse) {
         return next(new apiError("Bu mail adresi ile kayıtlı kullanıcı var", httpStatus.BAD_REQUEST));
       } else {
-        modify({ _id: req.user?._id }, req.body)
+        userService
+          .modify({ _id: req.user?._id }, req.body)
           .then((response) => {
             res.status(httpStatus.OK).send(response);
           })
@@ -47,7 +51,8 @@ const update = (req, res, next) => {
 };
 
 const list = (req, res) => {
-  get()
+  userService
+    .getAll()
     .then((response) => {
       res.status(httpStatus.OK).send(response);
     })
@@ -57,7 +62,8 @@ const list = (req, res) => {
 };
 
 const deleted = (req, res, next) => {
-  remove(req.params?.id)
+  userService
+    .remove(req.params?.id)
     .then((response) => {
       if (!response) {
         return next(new apiError("Böyle bir kayıt yok.", httpStatus.NOT_FOUND));
@@ -71,7 +77,8 @@ const deleted = (req, res, next) => {
 };
 
 const getById = (req, res, next) => {
-  findOne({ _id: req.params?.id })
+  userService
+    .findOne({ _id: req.params?.id })
     .then((response) => {
       if (!response) {
         return next(new apiError("Böyle bir kayıt yok.", httpStatus.NOT_FOUND));
@@ -86,7 +93,8 @@ const getById = (req, res, next) => {
 
 const login = (req, res, next) => {
   req.body.password = passwordToHash(req.body.password);
-  userLogin(req.body)
+  userService
+    .findOne(req.body)
     .then((user) => {
       if (!user) return next(new apiError("Böyle bir kullanıcı yok.", 404));
       user = {
@@ -108,7 +116,7 @@ const login = (req, res, next) => {
 const resetPassword = (req, res, next) => {
   const newPassword = `usr-${new Date().getTime()}`;
   console.log(newPassword);
-  modify({ email: req.body.email }, { password: passwordToHash(newPassword) })
+  userService.modify({ email: req.body.email }, { password: passwordToHash(newPassword) })
     .then((response) => {
       if (!response) return next(new apiError("Böyle bir kullanıcı yok."), httpStatus.NOT_FOUND);
       eventEmitter.emit("send", {
@@ -127,9 +135,9 @@ const resetPassword = (req, res, next) => {
 
 const changePassword = (req, res) => {
   req.body.password = passwordToHash(req.body.password);
-  modify({ _id: req.user?._id }, req.body)
+  userService.modify({ _id: req.user?._id }, req.body)
     .then((response) => {
-      res.status(httpStatus.OK).send({message:"Parolanız başarıyla değiştirilmiştir."});
+      res.status(httpStatus.OK).send({ message: "Parolanız başarıyla değiştirilmiştir." });
     })
     .catch((e) => {
       res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);

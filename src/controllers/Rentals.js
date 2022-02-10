@@ -1,9 +1,9 @@
-const { add, get, modify, remove, findById } = require("../services/Rentals");
+const rentalService = require("../services/Rentals");
 const httpStatus = require("http-status");
 const apiError = require("../errors/ApiError");
 
 const create = (req, res) => {
-  add(req.body)
+  rentalService.add(req.body)
     .then((response) => {
       res.status(httpStatus.OK).send(response);
     })
@@ -13,7 +13,7 @@ const create = (req, res) => {
 };
 
 const update = (req, res, next) => {
-  modify(req.params?.id, req.body)
+ rentalService.modify(req.params?.id, req.body)
     .then((response) => {
       if (!response) {
         return next(new apiError("ID bilgisi yanlış.", httpStatus.NOT_FOUND));
@@ -27,7 +27,7 @@ const update = (req, res, next) => {
 };
 
 const list = (req, res) => {
-  get()
+  rentalService.getAll()
     .then((response) => {
       res.status(httpStatus.OK).send(response);
     })
@@ -37,7 +37,7 @@ const list = (req, res) => {
 };
 
 const deleted = (req, res, next) => {
-  remove(req.params?.id)
+  rentalService.remove(req.params?.id)
     .then((response) => {
       if (!response) {
         return next(new apiError("Böyle bir kayıt yok.", httpStatus.NOT_FOUND));
@@ -51,7 +51,7 @@ const deleted = (req, res, next) => {
 };
 
 const getById = (req, res, next) => {
-  findById(req.params?.id)
+  rentalService.findById(req.params?.id)
     .then((response) => {
       if (!response) {
         return next(new apiError("Böyle bir kayıt yok.", httpStatus.NOT_FOUND));

@@ -6,7 +6,7 @@ const schema = require("../validations/Users");
 const router = express.Router();
 
 router.route("/").post(validate(schema.createValidation), create);
-router.route("/login").post(authenticateToken, validate(schema.loginValidation), login);
+router.route("/login").post( validate(schema.loginValidation), login);
 router.route("/reset-password").post(validate(schema.passwordValidation), resetPassword);
 router.route("/change-password").post(authenticateToken,validate(schema.changePasswordValidation), changePassword);
 

@@ -1,35 +1,14 @@
 const user = require("../models/User");
+const BaseService = require("./BaseService");
 
-const get = () => {
-  return user.find({});
-};
+class UserService extends BaseService {
+  constructor() {
+    super(user);
+  }
 
-const add = (data) => {
-  const userModel = new user(data); // yeni bir model örneği oluştur ve body'den gelen dataya göre doldur
-  return userModel.save();
-};
+  findOne(where) {
+    return user.findOne(where);
+  }
+}
 
-const modify = (where, data) => {
-  return user.findOneAndUpdate(where, data, { new: true });
-};
-
-const remove = (id) => {
-  return user.findByIdAndRemove(id);
-};
-
-const findOne = (where) => {
-  return user.findOne(where);
-};
-
-const userLogin = (loginData) => {
-  return user.findOne(loginData);
-};
-
-module.exports = {
-  add,
-  get,
-  modify,
-  remove,
-  findOne,
-  userLogin,
-};
+module.exports = new UserService();

@@ -1,9 +1,9 @@
-const { add, get, modify, remove, findById } = require("../services/Brands");
+const brandService = require("../services/Brands");
 const httpStatus = require("http-status");
 const apiError = require("../errors/ApiError");
 
 const create = (req, res) => {
-  add(req.body)
+ brandService.add(req.body)
     .then((response) => {
       res.status(httpStatus.OK).send(response);
     })
@@ -13,7 +13,7 @@ const create = (req, res) => {
 };
 
 const update = (req, res, next) => {
-  modify(req.params?.id, req.body)
+  brandService.modify(req.params?.id, req.body)
     .then((response) => {
       if (!response) {
         return next(new apiError("Hatalı ID bilgisi", httpStatus.NOT_FOUND));
@@ -27,7 +27,7 @@ const update = (req, res, next) => {
 };
 
 const list = (req, res) => {
-  get()
+  brandService.getAll()
     .then((response) => {
       res.status(httpStatus.OK).send(response);
     })
@@ -37,7 +37,7 @@ const list = (req, res) => {
 };
 
 const deleted = (req, res, next) => {
-  remove(req.params?.id)
+ brandService.remove(req.params?.id)
     .then((response) => {
       if (!response) {
         return next(new apiError("Böyle bir kayıt yok", httpStatus.NOT_FOUND));
@@ -51,7 +51,7 @@ const deleted = (req, res, next) => {
 };
 
 const getById = (req, res, next) => {
-  findById(req.params?.id)
+  brandService.findById(req.params?.id)
     .then((response) => {
       if (!response) {
         return next(new apiError("Böyle bir kayıt yok", httpStatus.NOT_FOUND));

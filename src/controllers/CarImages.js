@@ -1,4 +1,4 @@
-const { add, get, modify, remove, findById } = require("../services/CarImages");
+const carImageService = require("../services/CarImages");
 const httpStatus = require("http-status");
 const apiError = require("../errors/ApiError");
 const path = require("path");
@@ -18,7 +18,7 @@ const create = (req, res) => {
     }
   });
   req.body.path = fileName;
-  add(req.body)
+  carImageService.add(req.body)
     .then((response) => {
       res.status(httpStatus.OK).send(response);
     })
@@ -28,7 +28,7 @@ const create = (req, res) => {
 };
 
 const update = (req, res, next) => {
-  get({ _id: req.params?.id })
+  carImageService.getAll({ _id: req.params?.id })
     .then((imageResponse) => {
       if (!req?.files?.carImage) {
         return res.status(httpStatus.BAD_REQUEST).send({ error: "Lütfen bir resim seçin" });
@@ -44,13 +44,13 @@ const update = (req, res, next) => {
         }
       });
       req.body.path = fileName;
-      modify(req.params?.id, req.body)
-        .then((response) => {
-          res.status(httpStatus.OK).send(response);
-        })
-        .catch((e) => {
-          res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
-        });
+     carImageService.modify(req.params?.id, req.body)
+       .then((response) => {
+         res.status(httpStatus.OK).send(response);
+       })
+       .catch((e) => {
+         res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
+       });
     })
     .catch((e) => {
       res.status(httpStatus.INTERNAL_SERVER_ERROR).send(e);
@@ -58,7 +58,7 @@ const update = (req, res, next) => {
 };
 
 const list = (req, res) => {
-  get()
+  carImageService.getAll()
     .then((response) => {
       res.status(httpStatus.OK).send(response);
     })
@@ -68,7 +68,7 @@ const list = (req, res) => {
 };
 
 const deleted = (req, res, next) => {
-  remove(req.params?.id)
+  carImageService.remove(req.params?.id)
     .then((response) => {
       const removePath = path.join(__dirname, "../", `uploads/cars/${response.path}`);
       if (!response) {
@@ -88,7 +88,7 @@ const deleted = (req, res, next) => {
 };
 
 const getById = (req, res, next) => {
-  findById(req.params?.id)
+  carImageService.findById(req.params?.id)
     .then((response) => {
       if (!response) {
         return next(new apiError("Böyle bir kayıt yok", httpStatus.NOT_FOUND));

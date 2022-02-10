@@ -1,80 +1,68 @@
 const rental = require("../models/Rental");
+const BaseService = require("./BaseService");
 
-const get = (where) => {
-  return rental.find(where || {}).populate([
-    {
-      path: "carId",
-      select: "modelYear",
-      populate: [
-        {
-          path: "brandId",
-          select: "brandName",
-        },
-        {
-          path: "colorId",
-          select: "colorName",
-        },
-      ],
-    },
-    {
-      path: "customerId",
-      select: "companyName",
-      populate: [
-        {
-          path: "userId",
-          select: "firstName lastName",
-        },
-      ],
-    },
-  ]);
-};
+class RentalService extends BaseService {
+  constructor() {
+    super(rental);
+  }
 
-const add = (data) => {
-  const rentalModel = new rental(data); // yeni bir model örneği oluştur ve body'den gelen dataya göre doldur
-  return rentalModel.save();
-};
+  getAll(where) {
+    return rental.find(where || {}).populate([
+      {
+        path: "carId",
+        select: "modelYear",
+        populate: [
+          {
+            path: "brandId",
+            select: "brandName",
+          },
+          {
+            path: "colorId",
+            select: "colorName",
+          },
+        ],
+      },
+      {
+        path: "customerId",
+        select: "companyName",
+        populate: [
+          {
+            path: "userId",
+            select: "firstName lastName",
+          },
+        ],
+      },
+    ]);
+  }
 
-const modify = (id, data) => {
-  return rental.findByIdAndUpdate(id, data, { new: true });
-};
+  findById(id) {
+    return rental.findById(id).populate([
+      {
+        path: "carId",
+        select: "modelYear",
+        populate: [
+          {
+            path: "brandId",
+            select: "brandName",
+          },
+          {
+            path: "colorId",
+            select: "colorName",
+          },
+        ],
+      },
+      {
+        path: "customerId",
+        select: "companyName",
+        populate: [
+          {
+            path: "userId",
+            select: "firstName lastName",
+          },
+        ],
+      },
+    ]);
+  }
+}
 
-const remove = (id) => {
-  return rental.findByIdAndRemove(id);
-};
-
-const findById = (id) => {
-  return rental.findById(id).populate([
-    {
-      path: "carId",
-      select: "modelYear",
-      populate: [
-        {
-          path: "brandId",
-          select: "brandName",
-        },
-        {
-          path: "colorId",
-          select: "colorName",
-        },
-      ],
-    },
-    {
-      path: "customerId",
-      select: "companyName",
-      populate: [
-        {
-          path: "userId",
-          select: "firstName lastName",
-        },
-      ],
-    },
-  ]);
-};
-
-module.exports = {
-  add,
-  get,
-  modify,
-  remove,
-  findById,
-};
+module.exports = new RentalService();

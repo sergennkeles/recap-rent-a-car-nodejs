@@ -1,36 +1,24 @@
 const customer = require("../models/Customer");
+const BaseService = require("./BaseService");
 
-const get = (where) => {
-  return customer.find(where || {}).populate({
-    path: "userId",
-    select: "firstName, lastName, email",
-  });
-};
+class CustomerService extends BaseService {
+  constructor() {
+    super(customer);
+  }
 
-const add = (data) => {
-  const customerModel = new customer(data); // yeni bir model örneği oluştur ve body'den gelen dataya göre doldur
-  return customerModel.save();
-};
+  getAll(where) {
+    return customer.find(where || {}).populate({
+      path: "userId",
+      select: "firstName, lastName, email",
+    });
+  }
 
-const modify = (id, data) => {
-  return customer.findByIdAndUpdate(id, data, { new: true });
-};
+  findById(id) {
+    return customer.findById(id).populate({
+      path: "userId",
+      select: "firstName, lastName, email",
+    });
+  }
+}
 
-const remove = (id) => {
-  return customer.findByIdAndRemove(id);
-};
-
-const findById = (id) => {
-  return customer.findById(id).populate({
-    path: "userId",
-    select: "firstName, lastName, email",
-  });
-};
-
-module.exports = {
-  add,
-  get,
-  modify,
-  remove,
-  findById,
-};
+module.exports = new CustomerService();
